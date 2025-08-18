@@ -1,4 +1,4 @@
-import { IsString, IsEmail, MinLength, IsNotEmpty } from 'class-validator';
+import { IsString, IsEmail, MinLength, IsNotEmpty, IsOptional, IsEnum } from 'class-validator';
 
 export class RegisterDto {
   @IsString()
@@ -13,4 +13,8 @@ export class RegisterDto {
   @MinLength(6, { message: 'Password must be at least 6 characters' })
   @IsNotEmpty({ message: 'Password is required' })
   password: string;
+
+  @IsOptional()
+  @IsEnum(['admin', 'user'])
+  role?: 'admin' | 'user';
 }

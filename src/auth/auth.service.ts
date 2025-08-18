@@ -26,7 +26,8 @@ export class AuthService {
     const payload = { 
       email: user.email, 
       id: user.id,         
-      name: user.name
+      name: user.name,
+      role: user.role,
     };
     return {
       access_token: this.jwtService.sign(payload),
@@ -34,6 +35,7 @@ export class AuthService {
         id: user.id,
         name: user.name,
         email: user.email,
+        role: user.role,
       },
     };
   }
@@ -48,6 +50,7 @@ export class AuthService {
     const createdUser = await this.usersService.create({
       ...registerDto,
       password: hashedPassword,
+      role: registerDto.role ?? 'user',
     });
 
     const { password, ...result } = createdUser.toJSON();

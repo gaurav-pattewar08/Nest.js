@@ -32,4 +32,11 @@ export class User extends Model<User> {
     allowNull: false,
   })
   declare password: string;
+
+  @Column({
+    type: DataType.ENUM('admin', 'user'),
+    allowNull: false,
+    defaultValue: 'user',
+  })
+  declare role: 'admin' | 'user';
 }

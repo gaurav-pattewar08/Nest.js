@@ -10,7 +10,7 @@ import { Sequelize } from 'sequelize-typescript';
       port: 5432,
       username: 'postgres',
       password: 'gaurav',
-      database: 'postgres',
+      database: 'test',
       autoLoadModels: true,
       synchronize: true,
     }),
