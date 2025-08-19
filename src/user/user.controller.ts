@@ -6,6 +6,9 @@ import { ApiResponse } from '../common/services/response.service';
 import type { Response } from 'express';
 import { Roles } from '../auth/roles.decorator';
 import { RolesGuard } from '../auth/roles.guard';
+import { Post, UseInterceptors, UploadedFile, BadRequestException } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
 
 @Controller('user')
 export class UserController {
@@ -56,4 +59,25 @@ export class UserController {
       ApiResponse.send(res, null, 'User not found', HttpStatus.NOT_FOUND, true);
     }
   }
+
+  @Post('upload')
+  @UseInterceptors(FileInterceptor('file', {
+  storage: diskStorage({
+    destination: './uploads',
+    filename: (req, file, cb) => {
+      cb(null, `${Date.now()}-${file.originalname}`);
+    },
+  }),
+  limits: { fileSize: 1024 * 1024 }, 
+  fileFilter: (req, file, cb) => {
+    if (!['image/jpeg', 'image/png'].includes(file.mimetype)) {
+      return cb(new BadRequestException('Only JPEG/PNG files allowed'), false);
+    }
+    cb(null, true);
+  },
+}))
+uploadFile(@UploadedFile() file: Express.Multer.File) {
+  if (!file) throw new BadRequestException('File is required');
+  return { filename: file.filename, size: file.size };
+}
 }
