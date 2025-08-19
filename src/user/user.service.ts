@@ -19,9 +19,33 @@ export class UserService {
 
   }
 
-  async findAll(): Promise<User[]> {
-    return this.userModel.findAll();
-  }
+async findAll(page = 1, limit = 10): Promise<{
+  data: User[];
+  meta: {
+    totalItems: number;
+    itemCount: number;
+    totalPages: number;
+    currentPage: number;
+  };
+}> {
+  const offset = (page - 1) * limit;
+
+  const { count, rows } = await this.userModel.findAndCountAll({
+    limit,
+    offset,
+    order: [['createdAt', 'DESC']],
+  });
+
+  return {
+    data: rows,
+    meta: {
+      totalItems: count,
+      itemCount: rows.length,
+      totalPages: Math.ceil(count / limit),
+      currentPage: page,
+    },
+  };
+}
 
   async findOne(id: number): Promise<User> {
     const user = await this.userModel.findByPk(id);
